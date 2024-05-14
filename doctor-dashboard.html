@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Doctor Dashboard</title>
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+  <link rel="stylesheet" type="text/css" href="doctor-dashboard.css">
+  <script src="https://cdn.jsdelivr.net/npm/apexcharts@3.29.0/dist/apexcharts.min.js"></script>
+</head>
+<body>
+  <header>
+    <h1>Doctor Dashboard</h1>
+  </header>
+
+  <div class="container">
+    <div class="appointments">
+      <h2>Appointments</h2>
+      <ul id="appointmentsList">
+        <!-- Appointments will be dynamically added here -->
+      </ul>
+    </div>
+
+    <div class="patients">
+      <h2>My Patients</h2>
+      <ul id="patientsList">
+        <!-- Patients will be dynamically added here -->
+      </ul>
+    </div>
+  </div>
+
+  <div id="popup" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2 id="popupTitle">Patient Details</h2>
+      <p id="popupContent"></p>
+      <div class="buttons">
+        <button class="btn btn-primary" id="remoteMonitoringBtn">Remote Monitoring</button>
+        <button class="btn btn-info" id="viewMedicalRecordsBtn">View Medical Records</button>
+        <button class="btn btn-success" id="viewMedicationsBtn">View Medications</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="remoteMonitoringPopup" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2 id="monitoringTitle">Remote Monitoring</h2>
+      <div id="charts"></div>
+    </div>
+  </div>
+
+  <!-- Medical Records Popup -->
+  <div id="medicalRecordsPopup" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2>Medical Records</h2>
+      <p>This is where the patient's medical records will be displayed.</p>
+      <!-- Placeholder content -->
+      <ul id="medicalRecordsList">
+        <li>Record 1</li>
+        <li>Record 2</li>
+        <li>Record 3</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Medications Popup -->
+  <div id="medicationsPopup" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2>Medications</h2>
+      <p>This is where the patient's medications will be displayed.</p>
+      <!-- Placeholder content -->
+      <ul id="medicationsList">
+        <li>Medication 1</li>
+        <li>Medication 2</li>
+        <li>Medication 3</li>
+      </ul>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // JavaScript code here
+    document.addEventListener('DOMContentLoaded', function() {
+      var appointmentsList = document.getElementById('appointmentsList');
+      var patientsList = document.getElementById('patientsList');
+      var popup = document.getElementById('popup');
+      var popupTitle = document.getElementById('popupTitle');
+      var popupContent = document.getElementById('popupContent');
+      var closeBtn = document.querySelectorAll('.close');
+      var monitoringPopup = document.getElementById('remoteMonitoringPopup');
+      var monitoringTitle = document.getElementById('monitoringTitle');
+      var chartsContainer = document.getElementById('charts');
+      var viewMedicalRecordsBtn = document.getElementById('viewMedicalRecordsBtn');
+      var viewMedicationsBtn = document.getElementById('viewMedicationsBtn');
+
+      // Sample data
+      var appointmentsData = [
+        { date: '2024-03-08', patient: { name: 'Hilmon Jerd', age: 35, gender: 'Male', contact: '0758473627' } },
+        { date: '2024-02-09', patient: { name: 'Lana Del Ray', age: 25, gender: 'Female', contact: '0745363738' } },
+        { date: '2024-03-10', patient: { name: 'Alex Johnson', age: 28, gender: 'Non-Binary', contact: '075676980' } }
+      ];
+
+      // Populate appointments list
+      for (var i = 0; i < appointmentsData.length; i++) {
+        var appointment = appointmentsData[i];
+        var li = document.createElement('li');
+        var dateSpan = document.createElement('span');
+        dateSpan.textContent = 'Date: ' + appointment.date;
+        li.appendChild(dateSpan);
+        var br = document.createElement('br');
+        li.appendChild(br);
+        var patientNameSpan = document.createElement('span');
+        patientNameSpan.textContent = 'Patient: ' + appointment.patient.name;
+        li.appendChild(patientNameSpan);
+        var br2 = document.createElement('br');
+        li.appendChild(br2);
+        var ageSpan = document.createElement('span');
+        ageSpan.textContent = 'Age: ' + appointment.patient.age;
+        li.appendChild(ageSpan);
+        var br3 = document.createElement('br');
+        li.appendChild(br3);
+        var genderSpan = document.createElement('span');
+        genderSpan.textContent = 'Gender: ' + appointment.patient.gender;
+        li.appendChild(genderSpan);
+        var br4 = document.createElement('br');
+        li.appendChild(br4);
+        var contactSpan = document.createElement('span');
+        contactSpan.textContent = 'Contact: ' + appointment.patient.contact;
+        li.appendChild(contactSpan);
+        var br5 = document.createElement('br');
+        li.appendChild(br5);
+        var acceptBtn = document.createElement('button');
+        acceptBtn.textContent = 'Accept Virtual Meeting';
+        acceptBtn.className = 'btn btn-success';
+        li.appendChild(acceptBtn);
+        appointmentsList.appendChild(li);
+      }
+
+      // Populate patients list
+      var patientsData = [
+        { name: 'Hilmon Jerd', age: 35, gender: 'Male', contact: '0758473627' },
+        { name: 'Lana Del Ray', age: 25, gender: 'Female', contact: '0745363738' },
+        { name: 'Alex Johnson', age: 28, gender: 'Non-Binary', contact: '075676980' }
+      ];
+
+      for (var j = 0; j < patientsData.length; j++) {
+        var patient = patientsData[j];
+        var li = document.createElement('li');
+        var nameSpan = document.createElement('span');
+        nameSpan.className = 'patient-name';
+        nameSpan.textContent = patient.name;
+        li.appendChild(nameSpan);
+        var viewDetailsLink = document.createElement('a');
+        viewDetailsLink.href = '#';
+        viewDetailsLink.className = 'view-details';
+        viewDetailsLink.textContent = 'View Details';
+        viewDetailsLink.addEventListener('click', createPopupHandler(patient));
+        li.appendChild(viewDetailsLink);
+        patientsList.appendChild(li);
+      }
+
+      // Create a popup window with patient details
+      function createPopupHandler(patient) {
+        return function(event) {
+          event.preventDefault();
+          popupTitle.textContent = 'Patient Details: ' + patient.name;
+          popupContent.textContent = 'Age: ' + patient.age + ', Gender: ' + patient.gender + ', Contact: ' + patient.contact;
+          popup.style.display = 'block';
+
+          // Add event listeners to view medical records and medications buttons
+          viewMedicalRecordsBtn.addEventListener('click', function() {
+            // Show medical records popup
+            document.getElementById('medicalRecordsPopup').style.display = 'block';
+          });
+
+          viewMedicationsBtn.addEventListener('click', function() {
+            // Show medications popup
+            document.getElementById('medicationsPopup').style.display = 'block';
+          });
+        }
+      }
+
+      // Close the popup windows
+      closeBtn.forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          popup.style.display = 'none';
+          monitoringPopup.style.display = 'none';
+          document.getElementById('medicalRecordsPopup').style.display = 'none';
+          document.getElementById('medicationsPopup').style.display = 'none';
+        });
+      });
+    });
+  </script>
+</body>
+</html>
